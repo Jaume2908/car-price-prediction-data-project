@@ -393,26 +393,7 @@ elif menu_lateral == "Tendencia de mercado":
         # Analisis por potencia 
         st.markdown("## <b style='color:#A1753F; font-family: Cambria;'>📊 Análisis por potencia</b>", unsafe_allow_html=True)
 
-        # Filtro de marca
-        marcas_disponibles = df['make'].unique()
-        marca_seleccionada = st.selectbox("Selecciona una marca:", ["Todas"] + list(marcas_disponibles))
 
-        # Filtrar DataFrame según la selección de marca
-        if marca_seleccionada != "Todas":
-            df_filtrado = df[df['make'] == marca_seleccionada]
-        else:
-            df_filtrado = df
-
-        # Crear segmentos de potencia
-        bins = [0, 100, 200, 300, 400, np.inf]
-        labels = ['Baja (0-100 CV)', 'Media (100-200 CV)', 'Alta (200-300 CV)', 'Muy Alta (300-400 CV)', 'Extrema (>400 CV)']
-        df_filtrado['power_segment'] = pd.cut(df_filtrado['power'], bins=bins, labels=labels, right=False)
-
-        # Contar la cantidad de coches en cada segmento
-        power_segment_counts = df_filtrado['power_segment'].value_counts().sort_index()
-
-        # Calcular el precio promedio por segmento de potencia
-        avg_price_power_segment = df_filtrado.groupby('power_segment')['price'].mean().reset_index()
         # Selección del gráfico a visualizar
         grafico_seleccionado = st.radio(
             "Selecciona el gráfico a visualizar:", 
@@ -420,6 +401,26 @@ elif menu_lateral == "Tendencia de mercado":
         )
 
         if grafico_seleccionado == "Segmentación de potencias":
+            # Filtro de marca
+            marcas_disponibles = df['make'].unique()
+            marca_seleccionada = st.selectbox("Selecciona una marca:", ["Todas"] + list(marcas_disponibles))
+
+            # Filtrar DataFrame según la selección de marca
+            if marca_seleccionada != "Todas":
+                df_filtrado = df[df['make'] == marca_seleccionada]
+            else:
+                df_filtrado = df
+
+            # Crear segmentos de potencia
+            bins = [0, 100, 200, 300, 400, np.inf]
+            labels = ['Baja (0-100 CV)', 'Media (100-200 CV)', 'Alta (200-300 CV)', 'Muy Alta (300-400 CV)', 'Extrema (>400 CV)']
+            df_filtrado['power_segment'] = pd.cut(df_filtrado['power'], bins=bins, labels=labels, right=False)
+
+            # Contar la cantidad de coches en cada segmento
+            power_segment_counts = df_filtrado['power_segment'].value_counts().sort_index()
+
+            # Calcular el precio promedio por segmento de potencia
+            avg_price_power_segment = df_filtrado.groupby('power_segment')['price'].mean().reset_index()
             
             st.markdown("""
             Se realiza una segmentación de los coches según su potencia para analizar la distribución de precios y la cantidad de coches en cada segmento,
@@ -467,7 +468,7 @@ elif menu_lateral == "Tendencia de mercado":
                 )
                 st.plotly_chart(fig_avg_price_power_segment)
                 st.markdown("""
-                El <span style='color:#A1753F'>**precio**</span> promedio de los vehículos <span style='color:#A1753F'>**aumenta progresivamente con la potencia**</span>, alcanzando su máximo en la categoría de más de 400 CV.""")
+                El <span style='color:#A1753F'><b>precio</b></span> promedio de los vehículos <span style='color:#A1753F'><b>aumenta progresivamente con la potencia</b></span>, alcanzando su máximo en la categoría de más de 400 CV.""", unsafe_allow_html=True)
                 st.markdown("""
                 <hr>
                 <p style="text-align: center; font-size: 14px; color: #7D6B5B; font-style: italic;">
