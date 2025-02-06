@@ -15,7 +15,7 @@ from streamlit_folium import folium_static
 
 
 #CARGAMOS EL DATASET
-df = pd.read_csv('car_price.csv')
+df = pd.read_csv('data/car_price.csv')
 
 #Creamos un anueva columna que sea la combinación de marca y modelo
 df['brand_model'] = df['make'] + ' ' + df['model']
@@ -27,7 +27,7 @@ df['year_formato_fecha'] = pd.to_datetime(df['year'], format='%Y')
 st.set_page_config(page_title="Opticar - Soluciones Rentables", layout="wide")
 
 # Cargar el banner desde la carpeta del proyecto
-banner = Image.open("banner_opticar.jpg")
+banner = Image.open("Imagenes/banner_opticar.jpg")
 
 # Mostrar el banner en la parte superior de la aplicación
 st.image(banner, use_column_width=True)
@@ -58,7 +58,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Cargar la imagen en la barra lateral
-st.sidebar.image("opticar_logo.jpeg", use_column_width=True)
+st.sidebar.image("Imagenes/opticar_logo.jpeg", use_column_width=True)
 # Configuración del menú lateral
 menu_lateral = st.sidebar.radio("Selecciona una opción:", 
     ["Introducción", "Visión General", "Tendencia de mercado","Modelo predictivo","Panel de control | PowerBI","Conclusiones"]
@@ -766,10 +766,14 @@ elif menu_lateral == "Panel de control | PowerBI":
 """, unsafe_allow_html=True)
 
 elif menu_lateral =="Modelo predictivo":
-    
-    #Vamos a crear tabs con 3 opciones, Correlación Variables, PowerBI Variables modelo y Herraienta de Predicción
 
-    tab1, tab2, tab3 = st.tabs(['Correlación Variables',"PowerBI Variables modelo", 'Herramienta de Predicción'])
+    #Intro 
+    st.markdown('<h2 style="color: #A1753F; font-family: Cambria;">Objetivo</h2>', unsafe_allow_html=True)
+    st.markdown("Este modelo predictivo tiene como objetivo estimar el precio de un vehículo en función de diversas características como **marca, modelo, tipo de combustible, año de fabricación, kilometraje, potencia del motor y tipo de transmisión**. Para ello, se ha aplicado un pipeline de preprocesamiento que transforma las variables categóricas y numéricas antes de alimentar un modelo de regresión.")    
+    
+
+    #Vamos a crear tabs con 3 opciones, Correlación Variables, PowerBI Variables modelo y Herraienta de Predicción
+    tab1, tab2 = st.tabs(['Desarrollo del Modelo', 'Herramienta de Predicción'])
 
     #TAB 1
     with tab1:
@@ -788,89 +792,83 @@ elif menu_lateral =="Modelo predictivo":
         df_encoded['shift'] = le.fit_transform(df_encoded['shift'])
 
     # Seleccionar variablaes para heatmap price, year, kms, power
-        st.markdown("## 📊 Correlación Variables")
+        st.markdown("## <b style='color:#A1753F; font-family: Cambria;'>Mapa de Calor </b>", unsafe_allow_html=True)
 
         # Crear un gráfico de correlación con Plotly Express
         fig_heatmap = px.imshow(df_encoded[['price', 'year', 'kms', 'power', 'fuel', 'shift']].corr(), color_continuous_scale='Oranges')
-        fig_heatmap.update_layout(title="Mapa de Calor de Correlación")
+        fig_heatmap.update_layout()
         st.plotly_chart(fig_heatmap)
 
         # Conclusiones
-        st.markdown("## ✅ Conclusiones")
-        st.write("Con el objetivo de que nuestro modelo de predicción sea lo mejor posible el primer paso fue analizar que variables eran las más importantes. Para esto hemos realizado una análisis de correlación a través de un Heatmap. Como podemos observar  la variable más correlacionada con el precio es la potencia del vehículo, seguida del año de fabricación y el kilometraje que al mismo tiempo tiene una correlación negativa con el año de fabricación ya que mientras menor sea el número del año de fabricacion (osea mientras más viejo sea), más kilometraje tendrá.")
+        st.markdown("## <b style='color:#A1753F; font-family: Cambria;'>Insights</b>", unsafe_allow_html=True)
+        st.write("Con el objetivo de que nuestro modelo de predicción sea lo mejor posible el primer paso fue analizar que variables eran las más importantes y como se correlacionaban entré si y sobre todo con el precio. Para esto hemos realizado una análisis de correlación a través de un Heatmap. Como podemos observar  la variable más correlacionada con el precio es la potencia del vehículo, seguida del año de fabricación y el kilometraje que al mismo tiempo tiene una correlación negativa con el año de fabricación ya que mientras menor sea el número del año de fabricacion (osea mientras más viejo sea), más kilometraje tendrá.")
+        st.markdown("---")
 
-        st.markdown(""" ## **Explicación del modelo**""")
+        st.markdown("## <b style='color:#A1753F; font-family: Cambria;'>Desarrollo del modelo</b>", unsafe_allow_html=True)
         st.markdown("### Transformación de variables")
+        st.write("Los datos originales contienen tanto variables **categóricas** como **numéricas**, por lo que es necesario aplicar diferentes técnicas de preprocesamiento antes de entrenar el modelo. Esta foto sacada de Azure ML Studio resume el pipeline de transformación de variables aplicado:")
         #Insertamos la imagen referente al pipeline de transformación de variables pipeline_transformacion.png
-        st.image("pipeline_transformación_modelo.png", use_column_width=True)
+        st.image("Imagenes/pipeline_transformación_modelo.png", use_column_width=True)
         st.markdown("""
-        # 🔍 Transformación del Modelo Predictivo para la Predicción de Precios de Coches
+        
 
-        ##  Introducción
-        Este modelo predictivo tiene como objetivo estimar el precio de un vehículo en función de diversas características como **marca, modelo, tipo de combustible, año de fabricación, kilometraje, potencia del motor y tipo de transmisión**. Para ello, se ha aplicado un pipeline de preprocesamiento que transforma las variables categóricas y numéricas antes de alimentar un modelo de regresión.
+        ### <b style='color:#A1753F; font-family: Cambria;'>Manejo de datos categóricos</b>
+        Para las variables categóricas, que incluyen: **Marca**, **Modelo**, **Tipo de combustible**, **Tipo de transmisión**, se han transformado utilizando métodos diferentes según su naturaleza:
 
-        ---
-
-        ##  **Transformación de Datos**
-        Los datos originales contienen tanto variables **categóricas** como **numéricas**, por lo que es necesario aplicar diferentes técnicas de preprocesamiento antes de entrenar el modelo.
-
-        ###  **Manejo de Datos Categóricos**
-        Las variables categóricas incluyen:
-        - **Marca**
-        - **Modelo**
-        - **Tipo de combustible**
-        - **Tipo de transmisión**
-
-        Dado que estas variables son de texto, se han transformado utilizando dos métodos diferentes según su naturaleza:
-
-        #### 🔹 **Codificación Hash (HashOneHotEncoder)**
+        #### **Codificación hash (HashOneHotEncoder)**
         - Aplicada a variables categóricas con una gran cantidad de categorías únicas, como **marca y modelo**.
         - Convierte los valores en una representación binaria con 512 columnas.
-
-        #### 🔹 **Codificación Ordinal (LabelEncoder)**
-        - Se aplica a variables con pocas categorías, como **tipo de combustible y tipo de transmisión**.
-        - Se sustituyen los valores de texto por números enteros.
-
-        #### 🔹 **Vectorización de Caracteres (CharGramCountVectorizer)**
-        - Se usa en algunos atributos textuales para capturar patrones internos en los nombres de las marcas y modelos.
-
-        #### 🔹 **Imputación de Valores Faltantes (ModeCatImputer)**
+        
+        #### **Imputación de valores faltantes (ModeCatImputer)**
         - Se reemplazan valores faltantes en variables categóricas con la moda de la columna correspondiente.
 
+        #### **Codificación ordinal (LabelEncoder)**
+        - Se aplica a variables con pocas categorías, como **tipo de combustible y tipo de transmisión**.
+        - Se sustituyen los valores de texto por números enteros, asignando un número único entero a cada categoría.
+
+        #### **Vectorización de caracteres (CharGramCountVectorizer)**
+        - Se usa en algunos atributos textuales para capturar patrones internos en los nombres de las marcas y modelos, dividiendo el texto en pequeños fragmentos de caracteres llamados n-gramas.
+
         ---
 
-        ### **Manejo de Variables Numéricas**
-        Las variables numéricas incluyen:
-        - **Año de fabricación**
-        - **Kilometraje**
-        - **Potencia del motor**
+        ### <b style='color:#A1753F; font-family: Cambria;'>Manejo de variables numéricas</b>
+        Para las variables numéricas que incluyen: **Kilometraje**, **Potencia del motor**, se han utilizado las siguientes técnicas:
 
-        Para su tratamiento se han utilizado las siguientes técnicas:
-
-        #### 🔹 **Imputación de Media (MeanImputer)**
+        #### **Imputación de media (MeanImputer)**
         - Los valores faltantes en variables numéricas se reemplazan por la media de la columna.
 
-        #### 🔹 **Escalado**
-        - Aunque no se muestra en el diagrama, en algunos modelos de regresión puede aplicarse una normalización o escalado para mejorar la precisión.
-
         ---
 
-        ##  **Modelo Predictivo**
-        Tras el preprocesamiento, los datos se introducen en un modelo de **VotingEnsemble**, que combina múltiples modelos base para mejorar la precisión de las predicciones. En este caso, el ensamble incluye un XGBRegressor, un modelo basado en gradient boosting, que es especialmente eficaz para capturar patrones complejos en los datos y manejar valores atípicos. La combinación de estos modelos permite reducir el sesgo y la varianza, logrando predicciones más estables y precisas.
+        ### <b style='color:#A1753F; font-family: Cambria;'>Resultados modelo</b>
+        Tras el preprocesamiento, los datos se introducen en un Voting Ensemble, que combina múltiples modelos para mejorar la precisión. En este caso, incluye un XGBRegressor, un modelo de gradient boosting eficaz en la detección de patrones complejos y el manejo de valores atípicos. Esta combinación reduce la varianza, logrando predicciones más estables y precisas.
 
-                    
+        ##### Métricas de evaluación  
+        - <span style="color: #AF6926; font-family: Cambria;"><b>R2 Score</b></span>: 0.95212 ➝ Es la métrica clave, ya que muestra que el modelo explica el **95.21%** de la variabilidad de los precios de los coches. Por lo tanto podemos afirmar que el modelo tiene una alta capacidad predictiva y captura con precisión la relación entre las variables y el precio del coche.
+        - <span style="color: #AF6926; font-family: Cambria;"><b>MAE</b></span> (Error Absoluto Medio): 1679.7 ➝ En promedio, el modelo comete un error de aproximadamente 1679€ en sus predicciones.  
+        - <span style="color: #AF6926; font-family: Cambria;"><b>RMSE</b></span> (Raíz del Error Cuadrático Medio): 3754.7 ➝ Refleja que los errores en la predicción tienen una magnitud promedio de aproximadamente 3754€. Nuestro dataset incluye tanto coches de gama media como vehículos de lujo con precios muy elevados. Esto genera una gran variabilidad en los datos y puede explicar por qué el RMSE es significativamente mayor que el MAE. En particular, los coches de alto valor pueden tener errores de predicción más grandes, lo que impacta más el RMSE.
         """, unsafe_allow_html=True)
-    with tab2: 
 
-        #  Power Bi
-        st.markdown("## 📊 PowerBI Variables modelo")
+        st.markdown("""
+        El presente modelo de predicción se ha elaborado mediante la herramienta <span style='color:#AF6926; font-family: Cambria;'>**Automated ML**</span> de la plataforma <span style='color:#AF6926; font-family: Cambria;'>**Azure Machine Learning**</span> 
+        """, unsafe_allow_html=True)
+        
+        
+        st.markdown("""
+        <hr>
+        <p style="text-align: center; font-size: 14px; color: #7D6B5B; font-style: italic;">
+            <i>El presente informe ha sido elaborado en el margen de la relación contractual entre <b>Opticar</b> y <b>AutoMaster Select</b>,
+            con el propósito de proporcionar asesoramiento estratégico basado en el análisis de datos. Toda la información contenida en este
+            documento es confidencial y ha sido obtenida de fuentes de datos recopiladas mediante técnicas de web scraping. Su uso está estrictamente
+            limitado a los términos y condiciones acordados entre ambas partes.</i>
+        </p>
+    """, unsafe_allow_html=True)
     
 
-    with tab3:
+    with tab2:
 
         #Variables de entrada para el modelo predictivo
         # -----------------------------------------------------------------------------------------------------------------------------------------------------------
-        st.markdown("## <b style='color:#A1753F; font-family: Cambria;'>📊 Modelo predictivo</b>", unsafe_allow_html=True)
+        st.markdown("## <b style='color:#A1753F; font-family: Cambria;'> Modelo predictivo</b>", unsafe_allow_html=True)
 
         #Para que la marca sea correlativa con el modelo a la hora de introducir el input en la aplicación, crearemos un diccionario en el que para cada marca
         #introduzcamos los modelos que tiene. De esta forma, cuando el usuario introduzca una marca, podrá seleccionar el modelo correspondiente.
@@ -965,8 +963,17 @@ elif menu_lateral =="Modelo predictivo":
 
 # SOLO SE MUESTRA CONCLUSIONES CUANDO SE SELECCIONA ESA OPCIÓN
 elif menu_lateral == "Conclusiones":
-    st.markdown("## ✅ Conclusiones")
-    st.write("Puntos clave y recomendaciones estratégicas.")
+    st.markdown("## <b style='color:#A1753F; font-family: Cambria;'>Conclusiones</b>", unsafe_allow_html=True)
+    st.markdown("""
+            - Evitar la venta de Citroën, Renault y Opel debido a la saturación del mercado.
+            - Priorizar la venta de coches con menos de 100.000 km, ya que se devalúan menos.
+            - Enfocarse en la venta de coches con menos de 10 años de antigüedad para minimizar la devaluación.
+            - Los concesionarios en Madrid, Andalucía y Cataluña deberían adquirir coches de precio más elevado debido a la mayor demanda en estas regiones.
+            - No adquirir coches con más de 180.000 km, ya que la devaluación del precio es mucho más pronunciada.
+            - Aconsejamos comprar coches de gasolina posteriores a 2001 y de diésel posteriores a 2006, en línea con la normativa de etiquetas medioambientales. La venta de coches diésel sigue siendo el mercado más extendido.
+                """)
+
+
     st.markdown("""
     <hr>
     <p style="text-align: center; font-size: 14px; color: #7D6B5B; font-style: italic;">
