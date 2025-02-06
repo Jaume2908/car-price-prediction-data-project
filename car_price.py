@@ -769,7 +769,7 @@ elif menu_lateral =="Modelo predictivo":
 
     #Intro 
     st.markdown('<h2 style="color: #A1753F; font-family: Cambria;">Objetivo</h2>', unsafe_allow_html=True)
-    st.markdown("Este modelo predictivo tiene como objetivo estimar el precio de un vehículo en función de diversas características como **marca, modelo, tipo de combustible, año de fabricación, kilometraje, potencia del motor y tipo de transmisión**. Para ello, se ha aplicado un pipeline de preprocesamiento que transforma las variables categóricas y numéricas antes de alimentar un modelo de regresión.")    
+    st.markdown("Este modelo predictivo tiene como objetivo estimar el precio de un vehículo en función de diversas características como **marca, modelo, tipo de combustible, año de fabricación, kilometraje, potencia del motor y tipo de transmisión**. Para ello, se ha aplicado un pipeline de preprocesamiento que transforma las variables categóricas y numéricas antes de alimentar un modelo de regresión. La finalidad es que el concesionario en uso del presente modelo se utilice para estimar a que precio se debería vender un vehículo en función de sus características.")    
     
 
     #Vamos a crear tabs con 3 opciones, Correlación Variables, PowerBI Variables modelo y Herraienta de Predicción
