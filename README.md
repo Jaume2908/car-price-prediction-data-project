@@ -11,7 +11,7 @@ Además, desarrollamos una aplicación interactiva en **Streamlit** (*car_price.
 Este proyecto combina técnicas avanzadas de ciencia de datos, desarrollo web y visualización de información, ofreciendo a Automaster Select una solución integral basada en datos para optimizar su negocio. 
 
 
-## ***Contenido de la aplicación de streamlit****
+## ***Contenido de la aplicación de streamlit***
 En la aplicación de streamlit se podrán visualizar los siguientes apartados:
 * *Introducción*: breve introducción de quién somos y cual es nuestro objetivo.
 * *Visión General*: visión general de los datos obtenidos sobre los que hemos realizado el estudio.
